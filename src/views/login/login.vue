@@ -17,19 +17,36 @@
 
               <div class="input-text clearFix">
                 <i></i>
-                <input type="text" placeholder="手机号" v-model="phone">
-                <span class="error-msg">错误提示信息</span>
+                <input
+                  placeholder="请输入手机号"
+                  v-model="phone"
+                  name="phone"
+                  v-validate="{ required: true, regex: /^1(3[0-9]|4[01456879]|5[0-35-9]|6[2567]|7[0-8]|8[0-9]|9[0-35-9])\d{8}$/ }"
+                  :class="{ invalid: errors.has('phone') }"
+                />
+                <span class="error-msg">{{ errors.first("phone") }}</span>
+                <!-- <input type="text" placeholder="手机号" v-model="phone">
+                <span class="error-msg">错误提示信息</span> -->
               </div>
 
               <div class="input-text clearFix">
                 <i class="pwd"></i>
-                <input type="password" placeholder="请输入密码" v-model="password">
-                <span class="error-msg">错误提示信息</span>
+                <input
+                  type="password"
+                  placeholder="请输入密码"
+                  v-model="password"
+                  name="password"
+                  v-validate="{ required: true, regex: /^[A-Za-z0-9_-]{6,18}$/ }"
+                  :class="{ invalid: errors.has('password') }"
+                />
+                <span class="error-msg">{{ errors.first("password") }}</span>
+                <!-- <input type="password" placeholder="请输入密码" v-model="password">
+                <span class="error-msg">错误提示信息</span> -->
               </div>
 
               <div class="setting clearFix">
                 <label class="checkbox inline">
-                  <input name="m1" type="checkbox" value="2" checked="">
+                  <input type="checkbox" checked />
                   自动登录
                 </label>
                 <span class="forget">忘记密码？</span>
@@ -64,14 +81,17 @@ export default {
   },
   methods: {
     async loginSuccess() {
-      try {
-        const {phone,password} = this
-        if(phone && password){
-          await this.$store.dispatch('reqLoginSuccess',{phone,password})
-          this.$router.replace('/home')
-        } 
-      } catch (error) {
-        alert(error.message)
+      const success = await this.$validator.validateAll(); //全部表单验证
+      if(success){
+        try {
+          const {phone,password} = this
+          await this.$store.dispatch('reqLoginSuccess', { phone, password })
+          //判断query参数存不存在，存在调到query制定的路由，不存在跳到home首页
+          let toPath = this.$route.query.redirect ? this.$route.query.redirect : '/home'
+          this.$router.push(toPath)
+        } catch (error) {
+          alert(error.message)
+        }
       }
       
     }

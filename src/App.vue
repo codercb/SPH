@@ -22,10 +22,10 @@
       HeaderBar,
       FooterBar
     },
-    mounted() {
-      //获取用户信息展示
-      this.$store.dispatch('getUserInfo')
-    }
+    // mounted() {
+    //   //获取用户信息展示
+    //   this.$store.dispatch('getUserInfo')
+    // }
   }
 </script>
 

@@ -17,6 +17,17 @@ Vue.use(Button)
 Vue.prototype.$msgbox = MessageBox;
 Vue.prototype.$alert = MessageBox.alert;
 
+//引入vue-lazyload插件
+import VueLazyload from 'vue-lazyload'
+//注册插件
+const loadimage = require('@/assets/img/loading.gif')
+Vue.use(VueLazyload, {
+  loading: loadimage,
+})
+
+//引入vee-validate
+import '@/untils/validate'
+
 new Vue({
   router,
   store,

@@ -116,6 +116,15 @@ const routes = [
     meta: {
       title: '订单信息',
       show: true
+    },
+    //路由独享守卫
+    beforeEnter:(to,from,next)=>{
+      if(from.path == '/shopcart'){
+        next()
+      }else{
+        //如果不是从shopcart路由来的就停留到当前页
+        next(false)
+      }
     }
   },
   {
@@ -125,6 +134,15 @@ const routes = [
     meta: {
       title: '支付',
       show: true
+    },
+    //路由独享守卫
+    beforeEnter:(to,from,next)=>{
+      if(from.path == '/trade'){
+        next()
+      }else{
+        //如果不是从shopcart路由来的就停留到当前页
+        next(false)
+      }
     }
   },
   {
@@ -174,8 +192,6 @@ const router = new VueRouter({
 router.beforeEach(async (to,from,next) => {
   //页面标题
   document.title = to.matched[0].meta.title
-  // next()
-  // return false
   //处理登录存在的问题
   let token = store.state.user.token
   let userInfo = store.state.user.userInfo
@@ -205,8 +221,14 @@ router.beforeEach(async (to,from,next) => {
       }
     }
   }else{
-    //未登录时的问题处理
-    next()
+    //未登录 不能去交易相关、不能去支付相关、不能去个人中心
+    let toPath = to.path
+    if(toPath.indexOf('/trade') != -1 || toPath.indexOf('/pay') != -1 || toPath.indexOf('/center') != -1){
+      next('/login?redirect='+ toPath)
+    }else{
+      next()
+    }
+    
   }
 
 })
